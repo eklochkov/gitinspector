@@ -34,6 +34,9 @@ class Outputable(object):
 	def output_xml(self):
 		raise NotImplementedError(_("XML output not yet supported in") + " \"" + self.__class__.__name__ + "\".")
 
+	def output_excel(self):
+		raise NotImplementedError(_("Excel output not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+
 def output(outputable):
 	if format.get_selected() == "html" or format.get_selected() == "htmlembedded":
 		outputable.output_html()
@@ -41,5 +44,7 @@ def output(outputable):
 		outputable.output_json()
 	elif format.get_selected() == "text":
 		outputable.output_text()
+	elif format.get_selected() == "excel":
+		outputable.output_excel()
 	else:
 		outputable.output_xml()

@@ -152,3 +152,7 @@ class BlameOutput(Outputable):
 			              age_xml + percentage_in_comments_xml + "\t\t\t</author>\n")
 
 		print("\t<blame>\n" + message_xml + "\t\t<authors>\n" + blame_xml + "\t\t</authors>\n\t</blame>")
+
+
+	def output_excel(self):
+		print("")

@@ -119,3 +119,6 @@ class FilteringOutput(Outputable):
 			FilteringOutput.__output_xml_section__(_(FILTERING_EMAIL_INFO_TEXT), __filters__["email"][1], "emails")
 			FilteringOutput.__output_xml_section__(_(FILTERING_COMMIT_INFO_TEXT), __filters__["revision"][1], "revision")
 			print("\t</filtering>")
+
+	def output_excel(self):
+		print("")

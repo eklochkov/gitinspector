@@ -27,7 +27,7 @@ import zipfile
 from .localization import N_
 from . import basedir, localization, terminal, version
 
-__available_formats__ = ["html", "htmlembedded", "json", "text", "xml"]
+__available_formats__ = ["html", "htmlembedded", "json", "text", "xml", "excel"]
 
 DEFAULT_FORMAT = __available_formats__[3]
 
