@@ -102,6 +102,7 @@ class AuthorInfo(object):
 	insertions = 0
 	deletions = 0
 	commits = 0
+	month = None
 
 class ChangesThread(threading.Thread):
 	def __init__(self, hard, changes, first_hash, second_hash, offset):
@@ -250,12 +251,14 @@ class Changes(object):
 		return self.commits
 
 	@staticmethod
-	def modify_authorinfo(authors, key, commit):
+	def modify_authorinfo(authors, key, commit, month):
 		if authors.get(key, None) == None:
 			authors[key] = AuthorInfo()
 
 		if commit.get_filediffs():
 			authors[key].commits += 1
+			authors[key].month = month
+			authors[key].email = commit.email
 
 		for j in commit.get_filediffs():
 			authors[key].insertions += j.insertions
@@ -264,14 +267,15 @@ class Changes(object):
 	def get_authorinfo_list(self):
 		if not self.authors:
 			for i in self.commits:
-				Changes.modify_authorinfo(self.authors, i.author, i)
-
+				#Changes.modify_authorinfo(self.authors, i.email, i, None)
+				month = i.date[:7]
+				Changes.modify_authorinfo(self.authors,  (i.date, i.email), i, month)
 		return self.authors
 
 	def get_authordateinfo_list(self):
 		if not self.authors_dateinfo:
 			for i in self.commits:
-				Changes.modify_authorinfo(self.authors_dateinfo, (i.date, i.author), i)
+				Changes.modify_authorinfo(self.authors_dateinfo, (i.date, i.email), i, None)
 
 		return self.authors_dateinfo
 
@@ -283,4 +287,17 @@ class Changes(object):
 		return self.authors_by_email[name]
 
 	def get_latest_email_by_author(self, name):
-		return self.emails_by_author[name]
+		if self.emails_by_author.get(name, None) == None:
+			return name
+		else:
+			return self.emails_by_author[name]
+
+	def get_authorinfo_by_month_list(self):
+		if not self.authors:
+			for i in self.commits:
+				#get year and month from string like 2013-09-13
+				month = i.date[:7]
+				Changes.modify_authorinfo(self.authors, (month, i.email), i, month)
+
+		return self.authors
+

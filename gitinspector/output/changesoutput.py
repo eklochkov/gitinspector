@@ -215,6 +215,7 @@ class ChangesOutput(Outputable):
             sh.write(n, 2, "Insertions")
             sh.write(n, 3, "Deletions")
             sh.write(n, 4, "% of changes")
+            sh.write(n, 5, "Year - Month")
 
             for i in sorted(authorinfo_list):
                 authorinfo = authorinfo_list.get(i)
@@ -223,11 +224,12 @@ class ChangesOutput(Outputable):
 
 
                 n += 1
-                sh.write(n, 0, author_email)
+                sh.write(n, 0, authorinfo.email)
                 sh.write(n, 1, authorinfo.commits)
                 sh.write(n, 2, authorinfo.insertions)
                 sh.write(n, 3, authorinfo.deletions)
                 sh.write(n, 4, "{0:.2f}".format(percentage))
+                sh.write(n, 5, authorinfo.month)
             filename = "test.xls"
             book.save(filename)
         else:
