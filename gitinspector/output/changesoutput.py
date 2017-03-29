@@ -198,7 +198,7 @@ class ChangesOutput(Outputable):
             print("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
 
     def output_excel(self):
-        authorinfo_list = self.changes.get_authorinfo_list()
+        authorinfo_list = self.changes.get_authorinfo_by_month_list()
         total_changes = 0.0
 
         for i in authorinfo_list:

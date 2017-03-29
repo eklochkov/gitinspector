@@ -140,7 +140,7 @@ class ChangesThread(threading.Thread):
 			j = i.strip().decode("unicode_escape", "ignore")
 			j = j.encode("latin-1", "replace")
 			j = j.decode("utf-8", "replace")
-
+			print(" " + j)
 			if Commit.is_commit_line(j):
 				(author, email) = Commit.get_author_and_email(j)
 				self.changes.emails_by_author[author] = email
@@ -184,6 +184,8 @@ class Changes(object):
 
 	def __init__(self, repo, hard):
 		self.commits = []
+		print(["git", "rev-list", "--reverse", "--no-merges",
+		                                    interval.get_since(), interval.get_until(), "HEAD"])
 		git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
 		                                    interval.get_since(), interval.get_until(), "HEAD"]), bufsize=1,
 		                                    stdout=subprocess.PIPE).stdout
@@ -267,9 +269,9 @@ class Changes(object):
 	def get_authorinfo_list(self):
 		if not self.authors:
 			for i in self.commits:
-				#Changes.modify_authorinfo(self.authors, i.email, i, None)
-				month = i.date[:7]
-				Changes.modify_authorinfo(self.authors,  (i.date, i.email), i, month)
+				Changes.modify_authorinfo(self.authors, i.email, i, None)
+				#month = i.date[:7]
+				#Changes.modify_authorinfo(self.authors,  (i.date, i.email), i, month)
 		return self.authors
 
 	def get_authordateinfo_list(self):

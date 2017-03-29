@@ -43,13 +43,17 @@ def create(url):
     if parsed_url.scheme == "file" or parsed_url.scheme == "git" or parsed_url.scheme == "http" or \
                     parsed_url.scheme == "https" or parsed_url.scheme == "ssh":
         path = tempfile.mkdtemp(suffix=".gitinspector")
+        print("Start clone repository "+ url)
         git_clone = subprocess.Popen(["git", "clone", url, path], bufsize=1, stdout=sys.stderr)
+        #git_clone = subprocess.Popen(["git", "clone","-b", "7.1.1/develop", url, path], bufsize=1, stdout=sys.stderr)
         git_clone.wait()
 
         if git_clone.returncode != 0:
             sys.exit(git_clone.returncode)
 
         __cloned_paths__.append(path)
+        print("End clone repository "+ url +" to "+ path)
+
         return Repository(os.path.basename(parsed_url.path), path)
 
     return Repository(None, os.path.abspath(url))
