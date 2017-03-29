@@ -4,3 +4,5 @@ deb_dist
 dist
 *.egg-info
 *.pyc
+*.txt
+*.xls
