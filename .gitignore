@@ -6,3 +6,7 @@ dist
 *.pyc
 *.txt
 *.xls
+.idea/
+*.log
+gitinspector/__pycache__/
+gitinspector/output/__pycache__/
