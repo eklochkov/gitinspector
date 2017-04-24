@@ -51,6 +51,7 @@ class Runner(object):
         self.grading = False
         self.timeline = False
         self.useweeks = False
+        self.print_commits = False
 
     def process(self, repos):
         localization.check_compatibility(version.__version__)
@@ -68,7 +69,7 @@ class Runner(object):
         for repo in repos:
             os.chdir(repo.location)
             repo = repo if len(repos) > 1 else None
-            changes = Changes(repo, self.hard)
+            changes = Changes(repo, self.hard, self.print_commits)
             summed_blames += Blame(repo, self.hard, self.useweeks, changes)
             summed_changes += changes
 
@@ -142,7 +143,7 @@ def main():
                                                                     "localize-output:true",
                                                                     "metrics:true", "responsibilities:true", "since=",
                                                                     "grading:true",
-                                                                    "timeline:true", "until=", "version", "weeks:true"])
+                                                                    "timeline:true", "until=", "version", "weeks:true", "commits"])
         repos = __get_validated_git_repos__(set(args))
 
         # We need the repos above to be set before we read the git config.
@@ -202,6 +203,8 @@ def main():
                 run.useweeks = True
             elif o == "--weeks":
                 run.useweeks = optval.get_boolean_argument(a)
+            elif o == "--commits":
+                run.print_commits = True
             elif o in ("-x", "--exclude"):
                 if clear_x_on_next_pass:
                     clear_x_on_next_pass = False

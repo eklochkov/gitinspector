@@ -105,7 +105,7 @@ class AuthorInfo(object):
 	month = None
 
 class ChangesThread(threading.Thread):
-	def __init__(self, hard, changes, first_hash, second_hash, offset):
+	def __init__(self, hard, changes, first_hash, second_hash, offset, print_commits):
 		__thread_lock__.acquire() # Lock controlling the number of threads running
 		threading.Thread.__init__(self)
 
@@ -114,10 +114,11 @@ class ChangesThread(threading.Thread):
 		self.first_hash = first_hash
 		self.second_hash = second_hash
 		self.offset = offset
+		self.print_commits = print_commits
 
 	@staticmethod
-	def create(hard, changes, first_hash, second_hash, offset):
-		thread = ChangesThread(hard, changes, first_hash, second_hash, offset)
+	def create(hard, changes, first_hash, second_hash, offset, print_commits):
+		thread = ChangesThread(hard, changes, first_hash, second_hash, offset, print_commits)
 		thread.daemon = True
 		thread.start()
 
@@ -140,7 +141,8 @@ class ChangesThread(threading.Thread):
 			j = i.strip().decode("unicode_escape", "ignore")
 			j = j.encode("latin-1", "replace")
 			j = j.decode("utf-8", "replace")
-			print(" " + j)
+			if self.print_commits:
+				print(" " + j)
 			if Commit.is_commit_line(j):
 				(author, email) = Commit.get_author_and_email(j)
 				self.changes.emails_by_author[author] = email
@@ -182,12 +184,17 @@ class Changes(object):
 	authors_by_email = {}
 	emails_by_author = {}
 
-	def __init__(self, repo, hard):
+	def __init__(self, repo, hard, print_commits):
 		self.commits = []
+		# print(["git", "rev-list", "--reverse", "--no-merges",
+		#                                     interval.get_since(), interval.get_until(), "HEAD"])
+		# git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
+		#                                     interval.get_since(), interval.get_until(), "HEAD"]), bufsize=1,
+		#                                     stdout=subprocess.PIPE).stdout
 		print(["git", "rev-list", "--reverse", "--no-merges",
-		                                    interval.get_since(), interval.get_until(), "HEAD"])
+		                                    interval.get_since(), interval.get_until(), "--remotes"])
 		git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
-		                                    interval.get_since(), interval.get_until(), "HEAD"]), bufsize=1,
+		                                    interval.get_since(), interval.get_until(), "--remotes"]), bufsize=1,
 		                                    stdout=subprocess.PIPE).stdout
 		lines = git_log_hashes_r.readlines()
 		git_log_hashes_r.close()
@@ -204,7 +211,7 @@ class Changes(object):
 				if i % CHANGES_PER_THREAD == CHANGES_PER_THREAD - 1:
 					entry = entry.decode("utf-8", "replace").strip()
 					second_hash = entry
-					ChangesThread.create(hard, self, first_hash, second_hash, i)
+					ChangesThread.create(hard, self, first_hash, second_hash, i, print_commits)
 					first_hash = entry + ".."
 
 					if format.is_interactive_format():
@@ -212,7 +219,7 @@ class Changes(object):
 			else:
 				entry = entry.decode("utf-8", "replace").strip()
 				second_hash = entry
-				ChangesThread.create(hard, self, first_hash, second_hash, i)
+				ChangesThread.create(hard, self, first_hash, second_hash, i, print_commits)
 
 		# Make sure all threads have completed.
 		for i in range(0, NUM_THREADS):
