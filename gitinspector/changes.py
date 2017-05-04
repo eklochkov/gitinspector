@@ -18,14 +18,19 @@
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
+
 import bisect
 import datetime
 import multiprocessing
 import os
 import subprocess
 import threading
-from .localization import N_
+
+from gitinspector.filediff import FileDiff
+from gitinspector.sqlitedaocommitdiff import SqliteDaoCommitDiff
 from . import extensions, filtering, format, interval, terminal
+from .commitdiff import CommitDiff
+from .localization import N_
 
 CHANGES_PER_THREAD = 200
 NUM_THREADS = multiprocessing.cpu_count()
@@ -33,37 +38,6 @@ NUM_THREADS = multiprocessing.cpu_count()
 __thread_lock__ = threading.BoundedSemaphore(NUM_THREADS)
 __changes_lock__ = threading.Lock()
 
-class FileDiff(object):
-	def __init__(self, string):
-		commit_line = string.split("|")
-
-		if commit_line.__len__() == 2:
-			self.name = commit_line[0].strip()
-			self.insertions = commit_line[1].count("+")
-			self.deletions = commit_line[1].count("-")
-
-	@staticmethod
-	def is_filediff_line(string):
-		string = string.split("|")
-		return string.__len__() == 2 and string[1].find("Bin") == -1 and ('+' in string[1] or '-' in string[1])
-
-	@staticmethod
-	def get_extension(string):
-		string = string.split("|")[0].strip().strip("{}").strip("\"").strip("'")
-		return os.path.splitext(string)[1][1:]
-
-	@staticmethod
-	def get_filename(string):
-		return string.split("|")[0].strip().strip("{}").strip("\"").strip("'")
-
-	@staticmethod
-	def is_valid_extension(string):
-		extension = FileDiff.get_extension(string)
-
-		for i in extensions.get():
-			if (extension == "" and i == "*") or extension == i or i == '**':
-				return True
-		return False
 
 class Commit(object):
 	def __init__(self, string):
@@ -273,6 +247,21 @@ class Changes(object):
 			authors[key].insertions += j.insertions
 			authors[key].deletions += j.deletions
 
+	@staticmethod
+	def put_commit_to_db(dao_commit_diff, commit):
+		for j in commit.get_filediffs():
+			commit_diff = CommitDiff()
+			commit_diff.key = 0
+			commit_diff.email = commit.email
+			commit_diff.insertions = j.insertions
+			commit_diff.deletions = j.deletions
+			commit_diff.commits = 0
+			commit_diff.date = commit.date
+			commit_diff.author_name = None
+			commit_diff.file_name = j.name
+			dao_commit_diff.insert(commit_diff)
+
+
 	def get_authorinfo_list(self):
 		if not self.authors:
 			for i in self.commits:
@@ -303,10 +292,10 @@ class Changes(object):
 
 	def get_authorinfo_by_month_list(self):
 		if not self.authors:
+			dao_commit_diff = SqliteDaoCommitDiff()
 			for i in self.commits:
-				#get year and month from string like 2013-09-13
-				month = i.date[:7]
-				Changes.modify_authorinfo(self.authors, (month, i.email), i, month)
-
+				Changes.put_commit_to_db(dao_commit_diff, i)
+			self.authors = dao_commit_diff.get_sum()
+			dao_commit_diff.close()
 		return self.authors
 

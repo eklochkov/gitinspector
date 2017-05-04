@@ -24,9 +24,10 @@ import multiprocessing
 import re
 import subprocess
 import threading
+
+from gitinspector.filediff import FileDiff
 from .localization import N_
-from .changes import FileDiff
-from . import comment, extensions, filtering, format, interval, terminal
+from . import comment, extensions, filtering, format, interval, terminal, changes
 
 NUM_THREADS = multiprocessing.cpu_count()
 

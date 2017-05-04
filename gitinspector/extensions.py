@@ -19,14 +19,19 @@
 
 from __future__ import unicode_literals
 
-DEFAULT_EXTENSIONS = ["java", "c", "cc", "cpp", "h", "hh", "hpp", "py", "glsl", "rb", "js", "sql", "fltar","pkb","pks"]
+DEFAULT_EXTENSIONS = {"java":"java", "c":"c", "cc":"c", "cpp":"cpp", "h":"cpp", "hh":"cpp", "hpp":"cpp", "py":"python",
+                      "glsl":"opengl", "rb":"ruby", "js":"javascript", "sql":"sql", "fltar":"ansible","pkb":"sql","pks":"sql"}
 
-__extensions__ = DEFAULT_EXTENSIONS
+__extensions__ = DEFAULT_EXTENSIONS.keys()
+__extensions_dict__ = DEFAULT_EXTENSIONS
 __located_extensions__ = set()
 
 
 def get():
     return __extensions__
+
+def get_dict():
+    return __extensions_dict__
 
 
 def define(string):

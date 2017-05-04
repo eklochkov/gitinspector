@@ -20,7 +20,7 @@
 from __future__ import unicode_literals
 import re
 import subprocess
-from .changes import FileDiff
+from gitinspector.filediff import FileDiff
 from . import comment, filtering, interval
 
 __metric_eloc__ = {"java": 500, "c": 500, "cpp": 500, "cs": 500, "h": 300, "hpp": 300, "php": 500, "py": 500, "glsl": 1000,
