@@ -23,6 +23,10 @@ import atexit
 import getopt
 import os
 import sys
+
+import stashy
+
+from gitinspector.stashintegration import StashIntegration
 from .blame import Blame
 from .changes import Changes
 from .config import GitConfig
@@ -129,6 +133,11 @@ def __get_validated_git_repos__(repos_relative):
 
     return repos
 
+def get_option_value(options, name):
+    for o, a in options:
+        if o == name :
+            return a
+    return None
 
 def main():
     terminal.check_terminal_encoding()
@@ -143,7 +152,11 @@ def main():
                                                                     "localize-output:true",
                                                                     "metrics:true", "responsibilities:true", "since=",
                                                                     "grading:true",
-                                                                    "timeline:true", "until=", "version", "weeks:true", "commits"])
+                                                                    "timeline:true", "until=", "version", "weeks:true",
+                                                                    "commits", "project=", "login=", "password="])
+        stash_int = StashIntegration("stash.billing.ru", get_option_value(opts,'--login'), get_option_value(opts,'--password'))
+        args = stash_int.get_reps_like(get_option_value(opts,'--project'))
+        print (args)
         repos = __get_validated_git_repos__(set(args))
 
         # We need the repos above to be set before we read the git config.

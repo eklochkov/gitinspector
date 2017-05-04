@@ -209,25 +209,42 @@ class ChangesOutput(Outputable):
             book = xlwt.Workbook()
             sh = book.add_sheet("Data")
             n = 0
-
-            sh.write(n, 0, "Author email")
-            sh.write(n, 1, "Code type")
-            sh.write(n, 2, "Commits")
-            sh.write(n, 3, "Insertions")
-            sh.write(n, 4, "Deletions")
-            sh.write(n, 5, "% of changes")
-            sh.write(n, 6, "Year - Month")
+            c = 0
+            sh.write(n, c , "Author email")
+            c += 1
+            sh.write(n, c, "Code type")
+            c += 1
+            sh.write(n, c, "Commits")
+            c += 1
+            sh.write(n, c, "Insertions")
+            c += 1
+            sh.write(n, c, "Deletions")
+            c += 1
+            sh.write(n, c, "Modifies")
+            c += 1
+            sh.write(n, c, "% of changes")
+            c += 1
+            sh.write(n, c, "Year - Month")
 
             for authorinfo in authorinfo_list:
                 percentage = 0 if total_changes == 0 else (authorinfo.insertions + authorinfo.deletions) / total_changes * 100
                 n += 1
-                sh.write(n, 0, authorinfo.author_name)
-                sh.write(n, 1, authorinfo.code_type)
-                sh.write(n, 2, authorinfo.commits)
-                sh.write(n, 3, authorinfo.insertions)
-                sh.write(n, 4, authorinfo.deletions)
-                sh.write(n, 5, "{0:.2f}".format(percentage))
-                sh.write(n, 6, authorinfo.month)
+                c = 0
+                sh.write(n, c, authorinfo.author_name)
+                c += 1
+                sh.write(n, c, authorinfo.code_type)
+                c += 1
+                sh.write(n, c, authorinfo.commits)
+                c += 1
+                sh.write(n, c, authorinfo.insertions)
+                c += 1
+                sh.write(n, c, authorinfo.deletions)
+                c += 1
+                sh.write(n, c, authorinfo.deletions + authorinfo.insertions)
+                c += 1
+                sh.write(n, c, "{0:.2f}".format(percentage))
+                c += 1
+                sh.write(n, c, authorinfo.month)
             filename = "test.xls"
             book.save(filename)
             print ("Generate Excel file with name ", filename)
