@@ -216,21 +216,8 @@ class ChangesOutput(Outputable):
             for authorinfo in authorinfo_list:
                 percentage = 0 if total_changes == 0 else (authorinfo.insertions + authorinfo.deletions) / total_changes * 100
                 n += 1
-                c = 0
-                sh.write(n, c, authorinfo.author_name)
-                c += 1
-                sh.write(n, c, authorinfo.code_type)
-                c += 1
-                sh.write(n, c, authorinfo.commits)
-                c += 1
-                sh.write(n, c, authorinfo.insertions)
-                c += 1
-                sh.write(n, c, authorinfo.deletions)
-                c += 1
-                sh.write(n, c, authorinfo.deletions + authorinfo.insertions)
-                c += 1
-                sh.write(n, c, "{0:.2f}".format(percentage))
-                c += 1
-                sh.write(n, c, authorinfo.month)
+                sh.write_row(n,0,[authorinfo.author_name,authorinfo.code_type,authorinfo.commits,  authorinfo.insertions,
+                                  authorinfo.deletions, authorinfo.deletions + authorinfo.insertions,
+                                  "{0:.2f}".format(percentage), authorinfo.month]);
         else:
             print(_(NO_COMMITED_FILES_TEXT) + ".")
