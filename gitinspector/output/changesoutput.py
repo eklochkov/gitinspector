@@ -209,24 +209,10 @@ class ChangesOutput(Outputable):
 
         if authorinfo_list:
             sh = get_data_sheet()
+            headings = ['Author email', 'Code type', 'Commits', 'Insertions', 'Deletions', 'Modifies', '% of changes', 'Year - Month']
+            sh.write_row('A2', headings)
+            sh.set_column('A:A', 30)
             n = 1
-            c = 0
-            sh.write(n, c , "Author email")
-            c += 1
-            sh.write(n, c, "Code type")
-            c += 1
-            sh.write(n, c, "Commits")
-            c += 1
-            sh.write(n, c, "Insertions")
-            c += 1
-            sh.write(n, c, "Deletions")
-            c += 1
-            sh.write(n, c, "Modifies")
-            c += 1
-            sh.write(n, c, "% of changes")
-            c += 1
-            sh.write(n, c, "Year - Month")
-
             for authorinfo in authorinfo_list:
                 percentage = 0 if total_changes == 0 else (authorinfo.insertions + authorinfo.deletions) / total_changes * 100
                 n += 1
@@ -246,6 +232,5 @@ class ChangesOutput(Outputable):
                 sh.write(n, c, "{0:.2f}".format(percentage))
                 c += 1
                 sh.write(n, c, authorinfo.month)
-
         else:
             print(_(NO_COMMITED_FILES_TEXT) + ".")

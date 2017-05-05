@@ -108,9 +108,7 @@ class Runner(object):
 
         format.output_footer()
         if format.get_selected() == "excel":
-            filename = "test.xls"
-            get_excel_book().save(filename)
-            print ("Generate Excel file with name ", filename)
+            get_excel_book().close()
         os.chdir(previous_directory)
 
 
