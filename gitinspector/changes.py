@@ -249,6 +249,7 @@ class Changes(object):
 
 	@staticmethod
 	def put_commit_to_db(dao_commit_diff, commit):
+		dao_commit_diff.insert_commit(commit.email, commit.date)
 		for j in commit.get_filediffs():
 			commit_diff = CommitDiff()
 			commit_diff.key = 0
@@ -259,7 +260,7 @@ class Changes(object):
 			commit_diff.date = commit.date
 			commit_diff.author_name = None
 			commit_diff.file_name = j.name
-			dao_commit_diff.insert(commit_diff)
+			dao_commit_diff.insert_change(commit_diff)
 
 
 	def get_authorinfo_list(self):

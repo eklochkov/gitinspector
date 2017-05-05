@@ -16,16 +16,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
-from .commitdiff import CommitDiff
-class DaoCommitDiff(object):
-    def insert_change(self, CommitDiff):
-        raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+import xlwt
 
-    def insert_commit(self, email, date):
-        raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+__excel_book__ = None
+__data_sheet__ = None
 
-    def get_sum(self): #must return array of ReportRow
-            raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+def get_excel_book():
+    global __excel_book__
+    if __excel_book__ == None:
+        __excel_book__ = xlwt.Workbook()
+    return __excel_book__
 
-    def close(self):
-        raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+def get_data_sheet():
+    global __data_sheet__
+    if __data_sheet__ == None:
+        __data_sheet__ =  get_excel_book().add_sheet("Data")
+    return __data_sheet__

@@ -20,7 +20,8 @@
 from __future__ import unicode_literals
 
 DEFAULT_EXTENSIONS = {"java":"java", "c":"c", "cc":"c", "cpp":"cpp", "h":"cpp", "hh":"cpp", "hpp":"cpp", "py":"python",
-                      "glsl":"opengl", "rb":"ruby", "js":"javascript", "sql":"sql", "fltar":"ansible","pkb":"sql","pks":"sql"}
+                      "glsl":"opengl", "rb":"ruby", "js":"javascript", "sql":"sql", "fltar":"ansible","pkb":"sql",
+                      "pks":"sql","txt":"text"}
 
 __extensions__ = DEFAULT_EXTENSIONS.keys()
 __extensions_dict__ = DEFAULT_EXTENSIONS

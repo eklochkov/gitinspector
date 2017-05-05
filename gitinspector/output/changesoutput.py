@@ -21,6 +21,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 import json
 import textwrap
+
+from excelintegration import get_excel_book, get_data_sheet
 from ..localization import N_
 from .. import format, gravatar, terminal
 from .outputable import Outputable
@@ -206,9 +208,8 @@ class ChangesOutput(Outputable):
             total_changes += authorinfo.deletions
 
         if authorinfo_list:
-            book = xlwt.Workbook()
-            sh = book.add_sheet("Data")
-            n = 0
+            sh = get_data_sheet()
+            n = 1
             c = 0
             sh.write(n, c , "Author email")
             c += 1
@@ -245,8 +246,6 @@ class ChangesOutput(Outputable):
                 sh.write(n, c, "{0:.2f}".format(percentage))
                 c += 1
                 sh.write(n, c, authorinfo.month)
-            filename = "test.xls"
-            book.save(filename)
-            print ("Generate Excel file with name ", filename)
+
         else:
             print(_(NO_COMMITED_FILES_TEXT) + ".")

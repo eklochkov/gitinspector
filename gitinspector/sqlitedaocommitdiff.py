@@ -18,21 +18,24 @@
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
 import sqlite3
 
+from gitinspector.daocommitdiff import DaoCommitDiff
 from gitinspector.reportrow import ReportRow
 
 
-class SqliteDaoCommitDiff(object):
+class SqliteDaoCommitDiff(DaoCommitDiff):
     def __init__(self):
         self.connection = sqlite3.connect(":memory:")
         self.cursor = self.connection.cursor()
-        self.cursor.execute('''CREATE TABLE commits
+        self.cursor.execute('''CREATE TABLE changes
                                (id INTEGER, email VARCHAR(100),insertions INTEGER, deletions INTEGER,
                                commits INTEGER, date_diff TEXT, author_name VARCHAR(100), code_type VARCHAR(100), 
                                file_name VARCHAR(256))''')
+        self.cursor.execute('''CREATE TABLE commits
+                               (email VARCHAR(100), date_commit TEXT)''')
         self.connection.commit()
 
-    def insert(self, commit_diff):
-        self.cursor.execute('''INSERT INTO commits (id, email, insertions, 
+    def insert_change(self, commit_diff):
+        self.cursor.execute('''INSERT INTO changes (id, email, insertions, 
                                                        deletions, commits, date_diff, 
                                                        author_name, code_type, file_name)
                                  VALUES (?,?,?,?,?,?,?,?,?)''',
@@ -41,16 +44,22 @@ class SqliteDaoCommitDiff(object):
                             commit_diff.author_name, commit_diff.get_code_type(), commit_diff.file_name,))
         self.connection.commit()
 
-
+    def insert_commit(self, email, date):
+        self.cursor.execute('''INSERT INTO commits (email, date_commit)
+                                         VALUES (?,?)''',
+                            (email, date,))
+        self.connection.commit()
 
     def get_sum(self): #must return array of ReportRow
         rows = [];
-        for row in self.cursor.execute('''SELECT ifnull(email, author_name) name, code_type, 
-                                       SUM(insertions) insertions, SUM(deletions) deletions, 
-                                       SUM(commits), substr(date_diff,1,7) month
-                                  FROM commits 
-                                GROUP BY ifnull(email, author_name), code_type, substr(date_diff, 1, 7)
-                                ORDER BY month, email'''):
+        for row in self.cursor.execute('''SELECT ifnull(d.email, d.author_name) name, d.code_type, 
+                                       SUM(d.insertions) insertions, SUM(d.deletions) deletions, 
+                                       count(c.email), substr(d.date_diff,1,7) month
+                                  FROM changes d
+                                  LEFT JOIN commits c
+                                  ON c.email = d.email AND d.date_diff= c.date_commit
+                                GROUP BY ifnull(d.email, d.author_name), d.code_type, substr(d.date_diff, 1, 7)
+                                ORDER BY month, name'''):
             print(row)
             report_row = ReportRow();
             report_row.author_name = row[0];

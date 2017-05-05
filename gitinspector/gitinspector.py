@@ -26,6 +26,7 @@ import sys
 
 import stashy
 
+from excelintegration import get_excel_book
 from gitinspector.stashintegration import StashIntegration
 from .blame import Blame
 from .changes import Changes
@@ -106,6 +107,10 @@ class Runner(object):
                 outputable.output(ExtensionsOutput())
 
         format.output_footer()
+        if format.get_selected() == "excel":
+            filename = "test.xls"
+            get_excel_book().save(filename)
+            print ("Generate Excel file with name ", filename)
         os.chdir(previous_directory)
 
 
@@ -154,9 +159,10 @@ def main():
                                                                     "grading:true",
                                                                     "timeline:true", "until=", "version", "weeks:true",
                                                                     "commits", "project=", "login=", "password="])
-        stash_int = StashIntegration("stash.billing.ru", get_option_value(opts,'--login'), get_option_value(opts,'--password'))
-        args = stash_int.get_reps_like(get_option_value(opts,'--project'))
-        print (args)
+        if get_option_value(opts,'--project'):
+            stash_int = StashIntegration("stash.billing.ru", get_option_value(opts,'--login'), get_option_value(opts,'--password'))
+            args = stash_int.get_reps_like(get_option_value(opts,'--project'))
+            print (args)
         repos = __get_validated_git_repos__(set(args))
 
         # We need the repos above to be set before we read the git config.
