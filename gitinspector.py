@@ -19,6 +19,6 @@
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
 
 from gitinspector import gitinspector
-# --
+
 if __name__ == "__main__":
     gitinspector.main()
