@@ -157,6 +157,7 @@ class Changes(object):
 	authors_dateinfo = {}
 	authors_by_email = {}
 	emails_by_author = {}
+	authors_code_type = {}
 
 	def __init__(self, repo, hard, print_commits):
 		self.commits = []
@@ -297,6 +298,7 @@ class Changes(object):
 			for i in self.commits:
 				Changes.put_commit_to_db(dao_commit_diff, i)
 			self.authors = dao_commit_diff.get_sum()
+			self.authors_code_type = dao_commit_diff.get_code_type_data()
 			dao_commit_diff.close()
-		return self.authors
+		return self.authors, self.authors_code_type
 

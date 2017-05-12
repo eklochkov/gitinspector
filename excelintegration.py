@@ -35,6 +35,7 @@
 import xlsxwriter
 
 __excel_book__ = None
+__code_type_data_sheet__ = None
 __data_sheet__ = None
 
 def get_excel_book():
@@ -46,5 +47,37 @@ def get_excel_book():
 def get_data_sheet():
      global __data_sheet__
      if __data_sheet__ == None:
-         __data_sheet__ =  get_excel_book().add_worksheet()
+         __data_sheet__ =  get_excel_book().add_worksheet("Changes by month")
      return __data_sheet__
+
+
+def get_code_type_data_sheet():
+    global __code_type_data_sheet__
+    if __code_type_data_sheet__ == None:
+        __code_type_data_sheet__ = get_excel_book().add_worksheet("Authors by code")
+    return __code_type_data_sheet__
+
+def add_chart(sheet,series):
+    # Create a new chart object. In this case an embedded chart.
+    chart1 = get_excel_book().add_chart({'type': 'column', 'subtype': 'stacked'})
+    for serie in series:
+        chart1.add_series({
+            'name':       serie.name,
+            'categories': serie.categories,
+            'values':     serie.values,
+        })
+        # Add a chart title and some axis labels.
+  #  chart1.set_title({'name': 'Results of sample analysis'})
+   # chart1.set_x_axis({'name': 'Test number'})
+    #chart1.set_y_axis({'name': 'Sample length (mm)'})
+
+    # Set an Excel chart style. Colors with white outline and shadow.
+    chart1.set_style(10)
+
+    # Insert the chart into the worksheet (with an offset).
+    sheet.insert_chart('D2', chart1, {'x_offset': 25, 'y_offset': 10})
+
+class Serie(object):
+    name = ''
+    categories = ''
+    values = ''

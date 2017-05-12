@@ -29,3 +29,6 @@ class DaoCommitDiff(object):
 
     def close(self):
         raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
+
+    def get_sum_data(self):#must return array of array with sum modifies with code type as column
+        raise NotImplementedError(_("Method insert not yet supported in") + " \"" + self.__class__.__name__ + "\".")
