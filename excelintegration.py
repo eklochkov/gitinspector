@@ -59,7 +59,7 @@ def get_code_type_data_sheet():
 
 def add_chart(sheet,series):
     # Create a new chart object. In this case an embedded chart.
-    chart1 = get_excel_book().add_chart({'type': 'column', 'subtype': 'stacked'})
+    chart1 = get_excel_book().add_chart({'type': 'bar', 'subtype': 'stacked'})
     for serie in series:
         chart1.add_series({
             'name':       serie.name,
