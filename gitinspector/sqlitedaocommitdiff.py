@@ -41,7 +41,7 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                                  VALUES (?,?,?,?,?,?,?,?,?)''',
                             (commit_diff.key, commit_diff.email, commit_diff.insertions,
                              commit_diff.deletions, commit_diff.commits, commit_diff.date,
-                            commit_diff.author_name, commit_diff.get_code_type(), commit_diff.file_name,))
+                             commit_diff.author_name, commit_diff.get_code_type(), commit_diff.file_name,))
         self.connection.commit()
 
     def insert_commit(self, email, date):
@@ -50,7 +50,7 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                             (email, date,))
         self.connection.commit()
 
-    def get_sum(self): #must return array of ReportRow
+    def get_sum(self):  # must return array of ReportRow
         rows = [];
         for row in self.cursor.execute('''SELECT ifnull(d.email, d.author_name) name, d.code_type, 
                                        SUM(d.insertions) insertions, SUM(d.deletions) deletions, 
@@ -70,6 +70,25 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
             report_row.month = row[5];
             rows.append(report_row);
         return rows;
+
+    def get_code_type_data(self):  # must return array of array with sum modifies with code type as column
+        data = [];
+        headings = ['Author email'];
+        sql_pivot = 'SELECT ifnull(d.email, d.author_name) name '
+        for row in self.cursor.execute('''SELECT d.code_type
+                                  FROM changes d
+                                  GROUP BY code_type
+                                  ORDER BY code_type'''):
+            headings.append(row[0])
+            sql_pivot += ", SUM(CASE WHEN code_type='" + row[0] + "'   THEN d.insertions + d.deletions END) " + row[0].replace(' ', '') + " "
+        sql_pivot += ''' FROM changes d
+                         GROUP BY ifnull(d.email, d.author_name)'''
+        data.append(headings)
+        for row in self.cursor.execute(sql_pivot):
+            print(row)
+            data.append(row)
+
+        return data;
 
     def close(self):
         self.cursor.close()

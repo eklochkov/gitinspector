@@ -22,12 +22,10 @@ from __future__ import unicode_literals
 import json
 import textwrap
 
-from excelintegration import get_excel_book, get_data_sheet
+from excelintegration import get_excel_book, get_data_sheet, get_code_type_data_sheet, Serie, add_chart
 from ..localization import N_
 from .. import format, gravatar, terminal
 from .outputable import Outputable
-
-import xlwt
 
 HISTORICAL_INFO_TEXT = N_("The following historical commit information, by author, was found")
 NO_COMMITED_FILES_TEXT = N_("No commited files with the specified extensions were found")
@@ -200,7 +198,7 @@ class ChangesOutput(Outputable):
             print("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
 
     def output_excel(self):
-        authorinfo_list = self.changes.get_authorinfo_by_month_list()
+        authorinfo_list, authors_code_type_table  = self.changes.get_authorinfo_by_month_list()
         total_changes = 0.0
 
         for authorinfo in authorinfo_list:
@@ -219,5 +217,24 @@ class ChangesOutput(Outputable):
                 sh.write_row(n,0,[authorinfo.author_name,authorinfo.code_type,authorinfo.commits,  authorinfo.insertions,
                                   authorinfo.deletions, authorinfo.deletions + authorinfo.insertions,
                                   "{0:.2f}".format(percentage), authorinfo.month]);
+        if authors_code_type_table:
+            sheet_code_type = get_code_type_data_sheet()
+            n = 0
+            series = []
+            for row in authors_code_type_table:
+                if n==0:
+                    column_index = 0
+                    for column in row:
+                        if column_index>0:
+                            serie = Serie()
+                            serie.name = column
+                            serie.categories = "='Authors by code'!$A$2:$A$"+ str(len(authors_code_type_table))
+                            serie.values = "='Authors by code'!$"+ chr(ord('A') + column_index) + '$2:$'+chr(ord('A') + column_index)+ '$'+ str(len(authors_code_type_table))
+                            series.append(serie)
+                        column_index += 1
+                sheet_code_type.write_row(n, 0, row);
+                n += 1
+            #add chart
+            add_chart(sheet_code_type, series)
         else:
             print(_(NO_COMMITED_FILES_TEXT) + ".")
