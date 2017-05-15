@@ -37,7 +37,8 @@ class StashIntegration(object):
         project_list = self.stash.projects.list()
         reps = []
         for project in project_list:
-            if project['key'].find(project_substring) != -1:
+            print("project=", project['key'])
+            if project['key'].upper().find(project_substring.upper()) != -1:
               print("project=",project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
                   reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))

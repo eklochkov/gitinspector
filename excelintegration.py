@@ -32,6 +32,7 @@
 #     if __data_sheet__ == None:
 #         __data_sheet__ =  get_excel_book().add_sheet("Data")
 #     return __data_sheet__
+import datetime
 import xlsxwriter
 
 __excel_book__ = None
@@ -41,7 +42,8 @@ __data_sheet__ = None
 def get_excel_book():
      global __excel_book__
      if __excel_book__ == None:
-         __excel_book__ = xlsxwriter.Workbook("test.xlsx")
+         today = datetime.date.today()
+         __excel_book__ = xlsxwriter.Workbook("git_stat_"+today.strftime('%y%m%d%H%M%S')+".xlsx")
      return __excel_book__
 
 def get_data_sheet():
@@ -59,7 +61,7 @@ def get_code_type_data_sheet():
 
 def add_chart(sheet,series):
     # Create a new chart object. In this case an embedded chart.
-    chart1 = get_excel_book().add_chart({'type': 'column', 'subtype': 'stacked'})
+    chart1 = get_excel_book().add_chart({'type': 'bar', 'subtype': 'stacked'})
     for serie in series:
         chart1.add_series({
             'name':       serie.name,
