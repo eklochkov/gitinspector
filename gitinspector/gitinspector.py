@@ -24,6 +24,7 @@ import getopt
 import os
 import sys
 
+import logging
 import stashy
 
 from excelintegration import get_excel_book
@@ -145,11 +146,13 @@ def get_option_value(options, name):
 
 
 def main():
+    logging.basicConfig(filename='gitinspector.log', level=logging.INFO)
     terminal.check_terminal_encoding()
     terminal.set_stdin_encoding()
     argv = terminal.convert_command_line_to_utf8()
     run = Runner()
     repos = []
+    logging.info("TEST")
 
     try:
         opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:", ["exclude=", "file-types=", "format=",
@@ -163,7 +166,7 @@ def main():
             stash_int = StashIntegration("stash.billing.ru", get_option_value(opts, '--login'),
                                          get_option_value(opts, '--password'))
             args = stash_int.get_reps_like(get_option_value(opts, '--project'))
-            print(args)
+            logging.info(args)
         repos = __get_validated_git_repos__(set(args))
 
         # We need the repos above to be set before we read the git config.
@@ -237,8 +240,8 @@ def main():
     except (
             filtering.InvalidRegExpError, format.InvalidFormatError, optval.InvalidOptionArgument,
             getopt.error) as exception:
-        print(sys.argv[0], "\b:", exception.msg, file=sys.stderr)
-        print(_("Try `{0} --help' for more information.").format(sys.argv[0]), file=sys.stderr)
+        logging.info(sys.argv[0], "\b:", exception.msg, file=sys.stderr)
+        logging.info(_("Try `{0} --help' for more information.").format(sys.argv[0]), file=sys.stderr)
         sys.exit(2)
 
 

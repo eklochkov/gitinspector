@@ -60,7 +60,7 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                                   ON c.email = d.email AND d.date_diff= c.date_commit
                                 GROUP BY ifnull(d.email, d.author_name), d.code_type, substr(d.date_diff, 1, 7)
                                 ORDER BY month, name'''):
-            print(row)
+            logging.info(row)
             report_row = ReportRow();
             report_row.author_name = row[0];
             report_row.code_type = row[1];
@@ -85,7 +85,7 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                          GROUP BY ifnull(d.email, d.author_name)'''
         data.append(headings)
         for row in self.cursor.execute(sql_pivot):
-            print(row)
+            logging.info(row)
             data.append(row)
 
         return data;

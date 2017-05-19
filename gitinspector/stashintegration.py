@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
+import logging
 import stashy
 
 
@@ -31,15 +32,15 @@ class StashIntegration(object):
         project_list = self.stash.projects.list()
         for i in project_list:
             if i['key'].find(substring) != -1:
-              print(i['key'])
+              logging.info(i['key'])
 
     def get_reps_like(self, project_substring):
         project_list = self.stash.projects.list()
         reps = []
         for project in project_list:
-            print("project=", project['key'])
+            logging.info("project=" + project['key'])
             if project['key'].upper().find(project_substring.upper()) != -1:
-              print("project=",project['key'])
+              logging.info("project=" + project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
                   reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
         return reps

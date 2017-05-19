@@ -20,6 +20,9 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 import textwrap
+
+import logging
+
 from ..localization import N_
 from .. import extensions, terminal
 from .outputable import Outputable
@@ -49,7 +52,7 @@ class ExtensionsOutput(Outputable):
 				extensions_xml += " "
 
 			extensions_xml += "</p></div></div>"
-			print(extensions_xml)
+			logging.info(extensions_xml)
 
 	def output_json(self):
 		if extensions.__located_extensions__:
@@ -66,20 +69,20 @@ class ExtensionsOutput(Outputable):
 			used_extensions_json = used_extensions_json[:-2]
 			unused_extensions_json = unused_extensions_json[:-2]
 
-			print(",\n\t\t\"extensions\": {\n" + message_json + "\t\t\t\"used\": [ " + used_extensions_json +
+			logging.info(",\n\t\t\"extensions\": {\n" + message_json + "\t\t\t\"used\": [ " + used_extensions_json +
 			      " ],\n\t\t\t\"unused\": [ " + unused_extensions_json + " ]\n" + "\t\t}", end="")
 
 	def output_text(self):
 		if extensions.__located_extensions__:
-			print("\n" + textwrap.fill("{0} {1}:".format(_(EXTENSIONS_INFO_TEXT), _(EXTENSIONS_MARKED_TEXT)),
+			logging.info("\n" + textwrap.fill("{0} {1}:".format(_(EXTENSIONS_INFO_TEXT), _(EXTENSIONS_MARKED_TEXT)),
 			      width=terminal.get_size()[0]))
 
 			for i in sorted(extensions.__located_extensions__):
 				if ExtensionsOutput.is_marked(i):
-					print("[" + terminal.__bold__ + i + terminal.__normal__ + "]", end=" ")
+					logging.info("[" + terminal.__bold__ + i + terminal.__normal__ + "]")
 				else:
-					print (i, end=" ")
-			print("")
+					logging.info(i)
+			logging.info("")
 
 	def output_xml(self):
 		if extensions.__located_extensions__:
@@ -93,5 +96,5 @@ class ExtensionsOutput(Outputable):
 				else:
 					unused_extensions_xml += "\t\t\t<extension>" + i + "</extension>\n"
 
-			print("\t<extensions>\n" + message_xml + "\t\t<used>\n" + used_extensions_xml + "\t\t</used>\n" +
+			logging.info("\t<extensions>\n" + message_xml + "\t\t<used>\n" + used_extensions_xml + "\t\t</used>\n" +
 			      "\t\t<unused>\n" + unused_extensions_xml + "\t\t</unused>\n" + "\t</extensions>")
