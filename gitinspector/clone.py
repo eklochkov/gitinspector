@@ -49,7 +49,8 @@ def create(url):
         git_clone.wait()
 
         if git_clone.returncode != 0:
-            sys.exit(git_clone.returncode)
+            #sys.exit(git_clone.returncode)
+            print("Error clone repository " + url + ": " + str(git_clone.returncode))
 
         __cloned_paths__.append(path)
         print("End clone repository "+ url +" to "+ path)
