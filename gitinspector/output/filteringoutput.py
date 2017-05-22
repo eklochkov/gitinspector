@@ -20,6 +20,9 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 import textwrap
+
+import logging
+
 from ..localization import N_
 from ..filtering import __filters__, has_filtered
 from .. import terminal

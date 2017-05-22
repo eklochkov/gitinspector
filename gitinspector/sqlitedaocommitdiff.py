@@ -18,6 +18,8 @@
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
 import sqlite3
 
+import logging
+
 from gitinspector.daocommitdiff import DaoCommitDiff
 from gitinspector.reportrow import ReportRow
 
