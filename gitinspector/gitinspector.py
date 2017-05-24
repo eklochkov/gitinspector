@@ -146,13 +146,30 @@ def get_option_value(options, name):
 
 
 def main():
-    logging.basicConfig(filename='gitinspector.log', level=logging.INFO)
+    # logging setup
+    #logging.basicConfig(filename='gitinspector.log', level=logging.INFO)
+
+    # set up logging to file - see previous section for more details
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename='gitinspector.log',
+                        filemode='w')
+    # define a Handler which writes INFO messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    # set a format which is simpler for console use
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    # tell the handler to use this format
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
+
     terminal.check_terminal_encoding()
     terminal.set_stdin_encoding()
     argv = terminal.convert_command_line_to_utf8()
     run = Runner()
     repos = []
-    logging.info("TEST")
 
     try:
         opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:", ["exclude=", "file-types=", "format=",
