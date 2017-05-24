@@ -32,15 +32,16 @@ class StashIntegration(object):
         project_list = self.stash.projects.list()
         for i in project_list:
             if i['key'].find(substring) != -1:
-              logging.info(i['key'])
+              logging.info("Find project="+i['key'])
 
-    def get_reps_like(self, project_substring):
+    def get_reps_like(self, project_substring, exclude_reps_mask):
         project_list = self.stash.projects.list()
         reps = []
         for project in project_list:
-            logging.info("project=" + project['key'])
             if project['key'].upper().find(project_substring.upper()) != -1:
-              logging.info("project=" + project['key'])
+              logging.info("Search in project=" + project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
-                  reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
+                  if rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
+                      logging.info("Find rep="+rep['name'])
+                      reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
         return reps
