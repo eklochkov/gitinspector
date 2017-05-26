@@ -29,7 +29,7 @@ import threading
 import logging
 
 from gitinspector.filediff import FileDiff
-from gitinspector.sqlitedaocommitdiff import SqliteDaoCommitDiff
+from gitinspector.sqlitedaocommitdiff import SqliteDaoCommitDiff, get_sqlite_dao
 from . import extensions, filtering, format, interval, terminal
 from .commitdiff import CommitDiff
 from .localization import N_
@@ -302,7 +302,7 @@ class Changes(object):
 
     def get_authorinfo_by_month_list(self):
         if not self.authors:
-            dao_commit_diff = SqliteDaoCommitDiff()
+            dao_commit_diff = get_sqlite_dao()
             for i in self.commits:
                 Changes.put_commit_to_db(dao_commit_diff, i)
             self.authors = dao_commit_diff.get_sum()

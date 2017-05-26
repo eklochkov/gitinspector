@@ -28,6 +28,8 @@ import logging
 import stashy
 
 from excelintegration import get_excel_book
+from gitinspector.OrgStructure import OrganizationStructure
+from gitinspector.sqlitedaocommitdiff import get_sqlite_dao
 from gitinspector.stashintegration import StashIntegration
 from .blame import Blame
 from .changes import Changes
@@ -164,6 +166,12 @@ def main():
     console.setFormatter(formatter)
     # add the handler to the root logger
     logging.getLogger('').addHandler(console)
+
+    #load structure
+    org = OrganizationStructure()
+    org.load_from_excel("Viborka_sotrudnikov.xlsx")
+    dao_commit_diff = get_sqlite_dao()
+    dao_commit_diff.insert_org_structure(org)
 
     terminal.check_terminal_encoding()
     terminal.set_stdin_encoding()
