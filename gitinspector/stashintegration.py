@@ -41,7 +41,7 @@ class StashIntegration(object):
             if project['key'].upper().find(project_substring.upper()) != -1:
               logging.info("Search in project=" + project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
-                  if rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
+                  if exclude_reps_mask== None or rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
                       logging.info("Find rep="+rep['name'])
                       reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
         return reps
