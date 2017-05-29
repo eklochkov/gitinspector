@@ -97,7 +97,8 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                                   GROUP BY code_type
                                   ORDER BY code_type'''):
             headings.append(row[0])
-            sql_pivot += ", SUM(CASE WHEN code_type='" + row[0] + "'   THEN d.insertions + d.deletions END) " + row[0].replace(' ', '') + " "
+            sql_pivot += ", SUM(CASE WHEN code_type='" + row[0] + "'   THEN d.insertions + d.deletions END) " + row[
+                0].replace(' ', '') + " "
         sql_pivot += ''' FROM changes d
                          LEFT JOIN org_members o
                              ON o.email = d.email 
