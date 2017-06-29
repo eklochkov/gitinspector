@@ -23,6 +23,7 @@ DEFAULT_EXTENSIONS = {"java":"java", "c":"c", "cc":"c", "cpp":"cpp", "h":"cpp", 
                       "glsl":"opengl", "rb":"ruby", "js":"javascript", "sql":"sql", "fltar":"ansible","pkb":"sql",
                       "pks":"sql","txt":"text", "drt":"drools", "drl":"drools"}
 
+
 __extensions__ = DEFAULT_EXTENSIONS.keys()
 __extensions_dict__ = DEFAULT_EXTENSIONS
 __located_extensions__ = set()
