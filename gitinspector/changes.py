@@ -104,7 +104,7 @@ class ChangesThread(threading.Thread):
         git_log_r = subprocess.Popen(filter(None, ["git", "log", "--reverse", "--pretty=%ct|%cd|%H|%aN|%aE",
                                                    "--stat=100000,8192", "--no-merges", "-w", interval.get_since(),
                                                    interval.get_until(), "--date=short"] + (
-                                            ["-C", "-C", "-M"] if self.hard else []) +
+                                                ["-C", "-C", "-M"] if self.hard else []) +
                                             [self.first_hash + self.second_hash]), bufsize=1,
                                      stdout=subprocess.PIPE).stdout
         lines = git_log_r.readlines()
@@ -201,7 +201,11 @@ class Changes(object):
                     if format.is_interactive_format():
                         terminal.output_progress(progress_text, i, len(lines))
             else:
-                entry = entry.decode("utf-8", "replace").strip()
+                try:
+                    entry = entry.decode("utf-8", "replace").strip()
+                except:
+                    print(entry)
+
                 second_hash = entry
                 ChangesThread.create(hard, self, first_hash, second_hash, i, print_commits)
 
@@ -276,8 +280,8 @@ class Changes(object):
         if not self.authors:
             for i in self.commits:
                 Changes.modify_authorinfo(self.authors, i.email, i, None)
-            # month = i.date[:7]
-            # Changes.modify_authorinfo(self.authors,  (i.date, i.email), i, month)
+                # month = i.date[:7]
+                # Changes.modify_authorinfo(self.authors,  (i.date, i.email), i, month)
         return self.authors
 
     def get_authordateinfo_list(self):
