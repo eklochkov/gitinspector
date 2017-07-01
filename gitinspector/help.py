@@ -79,4 +79,4 @@ Report gitinspector bugs to gitinspector@ejwa.se.""")
 
 
 def output():
-    print(__doc__.format(sys.argv[0], ",".join(DEFAULT_EXTENSIONS), ",".join(__available_formats__)))
+    logging.info(__doc__.format(sys.argv[0], ",".join(DEFAULT_EXTENSIONS), ",".join(__available_formats__)))

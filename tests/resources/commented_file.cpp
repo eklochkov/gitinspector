@@ -32,14 +32,14 @@ class Rectangle {
 		Dimensions dimensions;
 	public:
 		Rectangle(Dimensions dimensions);
-		void print();
+		void logging.info();
 };
 
 Rectangle::Rectangle(Dimensions dimensions) {
 	this->dimensions = dimensions;
 }
 
-void Rectangle::print() {
+void Rectangle::logging.info() {
 	/*
 	 * Print some stuff (testing comments)
 	 */
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 
 	// Create rectanlge and wait for user-input.
 	Rectangle rectangle(dimensions);
-	rectangle.print();
+	rectangle.logging.info();
 	getchar();
 
 	return 0;

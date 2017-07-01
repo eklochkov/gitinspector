@@ -20,6 +20,7 @@
 import os
 import subprocess
 import sys
+import logging
 
 
 def get_basedir():
@@ -34,7 +35,10 @@ def get_basedir_git(path=None):
 
     if path != None:
         previous_directory = os.getcwd()
-        os.chdir(path)
+        try:
+            os.chdir(path)
+        except () as exception:
+            logging.error(exception.msg + ": " + path)
 
     bare_command = subprocess.Popen(["git", "rev-parse", "--is-bare-repository"], bufsize=1,
                                     stdout=subprocess.PIPE, stderr=open(os.devnull, "w"))

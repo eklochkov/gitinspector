@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 import json
 import textwrap
 
+import logging
+
 from excelintegration import get_excel_book, get_data_sheet, get_code_type_data_sheet, Serie, add_chart
 from ..localization import N_
 from .. import format, gravatar, terminal
@@ -97,7 +99,7 @@ class ChangesOutput(Outputable):
             changes_xml += "<p>" + _(NO_COMMITED_FILES_TEXT) + ".</p>"
 
         changes_xml += "</div></div>"
-        print(changes_xml)
+        logging.info(changes_xml)
 
     def output_json(self):
         authorinfo_list = self.changes.get_authorinfo_list()
@@ -131,10 +133,10 @@ class ChangesOutput(Outputable):
             else:
                 changes_json = changes_json[:-1]
 
-            print("\t\t\"changes\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + changes_json + "]\n\t\t}",
+            logging.info("\t\t\"changes\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + changes_json + "]\n\t\t}",
                   end="")
         else:
-            print("\t\t\"exception\": \"" + _(NO_COMMITED_FILES_TEXT) + "\"")
+            logging.info("\t\t\"exception\": \"" + _(NO_COMMITED_FILES_TEXT) + "\"")
 
     def output_text(self):
         authorinfo_list = self.changes.get_authorinfo_list()
@@ -145,7 +147,7 @@ class ChangesOutput(Outputable):
             total_changes += authorinfo_list.get(i).deletions
 
         if authorinfo_list:
-            print(textwrap.fill(_(HISTORICAL_INFO_TEXT) + ":", width=terminal.get_size()[0]) + "\n")
+            logging.info(textwrap.fill(_(HISTORICAL_INFO_TEXT) + ":", width=terminal.get_size()[0]) + "\n")
             terminal.printb(terminal.ljust(_("Author"), 21) + terminal.rjust(_("Commits"), 13) +
                             terminal.rjust(_("Insertions"), 14) + terminal.rjust(_("Deletions"), 15) +
                             terminal.rjust(_("% of changes"), 16))
@@ -155,13 +157,13 @@ class ChangesOutput(Outputable):
                 percentage = 0 if total_changes == 0 else (
                                                           authorinfo.insertions + authorinfo.deletions) / total_changes * 100
 
-                print(terminal.ljust(i, 20)[0:20 - terminal.get_excess_column_count(i)], end=" ")
-                print(str(authorinfo.commits).rjust(13), end=" ")
-                print(str(authorinfo.insertions).rjust(13), end=" ")
-                print(str(authorinfo.deletions).rjust(14), end=" ")
-                print("{0:.2f}".format(percentage).rjust(15))
+                logging.info(terminal.ljust(i, 20)[0:20 - terminal.get_excess_column_count(i)])
+                logging.info(str(authorinfo.commits).rjust(13))
+                logging.info(str(authorinfo.insertions).rjust(13))
+                logging.info(str(authorinfo.deletions).rjust(14))
+                logging.info("{0:.2f}".format(percentage).rjust(15))
         else:
-            print(_(NO_COMMITED_FILES_TEXT) + ".")
+            logging.info(_(NO_COMMITED_FILES_TEXT) + ".")
 
     def output_xml(self):
         authorinfo_list = self.changes.get_authorinfo_list()
@@ -193,9 +195,9 @@ class ChangesOutput(Outputable):
                 changes_xml += ("\t\t\t<author>\n" + name_xml + email_xml + gravatar_xml + commits_xml +
                                 insertions_xml + deletions_xml + percentage_xml + "\t\t\t</author>\n")
 
-            print("\t<changes>\n" + message_xml + "\t\t<authors>\n" + changes_xml + "\t\t</authors>\n\t</changes>")
+            logging.info("\t<changes>\n" + message_xml + "\t\t<authors>\n" + changes_xml + "\t\t</authors>\n\t</changes>")
         else:
-            print("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
+            logging.info("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
 
     def output_excel(self):
         authorinfo_list, authors_code_type_table  = self.changes.get_authorinfo_by_month_list()
@@ -207,7 +209,7 @@ class ChangesOutput(Outputable):
 
         if authorinfo_list:
             sh = get_data_sheet()
-            headings = ['Author email', 'Code type', 'Commits', 'Insertions', 'Deletions', 'Modifies', '% of changes', 'Year - Month']
+            headings = ['Author', 'Code type', 'Commits', 'Insertions', 'Deletions', 'Modifies', '% of changes', 'Year - Month']
             sh.write_row('A2', headings)
             sh.set_column('A:A', 30)
             n = 1
@@ -237,4 +239,4 @@ class ChangesOutput(Outputable):
             #add chart
             add_chart(sheet_code_type, series)
         else:
-            print(_(NO_COMMITED_FILES_TEXT) + ".")
+            logging.info(_(NO_COMMITED_FILES_TEXT) + ".")

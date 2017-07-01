@@ -24,9 +24,12 @@ import getopt
 import os
 import sys
 
+import logging
 import stashy
 
 from excelintegration import get_excel_book
+from gitinspector.OrgStructure import OrganizationStructure
+from gitinspector.sqlitedaocommitdiff import get_sqlite_dao
 from gitinspector.stashintegration import StashIntegration
 from .blame import Blame
 from .changes import Changes
@@ -145,6 +148,31 @@ def get_option_value(options, name):
 
 
 def main():
+    # logging setup
+    #logging.basicConfig(filename='gitinspector.log', level=logging.INFO)
+
+    # set up logging to file - see previous section for more details
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename='gitinspector.log',
+                        filemode='w')
+    # define a Handler which writes INFO messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    # set a format which is simpler for console use
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    # tell the handler to use this format
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
+
+    #load structure
+    org = OrganizationStructure()
+    org.load_from_excel("Viborka_sotrudnikov.xlsx")
+    dao_commit_diff = get_sqlite_dao()
+    dao_commit_diff.insert_org_structure(org)
+
     terminal.check_terminal_encoding()
     terminal.set_stdin_encoding()
     argv = terminal.convert_command_line_to_utf8()
@@ -158,12 +186,12 @@ def main():
                                                                     "metrics:true", "responsibilities:true", "since=",
                                                                     "grading:true",
                                                                     "timeline:true", "until=", "version", "weeks:true",
-                                                                    "commits", "project=", "login=", "password="])
+                                                                    "commits", "project=", "login=", "password=", "exclude_rep_mask="])
         if get_option_value(opts, '--project'):
             stash_int = StashIntegration("stash.billing.ru", get_option_value(opts, '--login'),
                                          get_option_value(opts, '--password'))
-            args = stash_int.get_reps_like(get_option_value(opts, '--project'))
-            print(args)
+            args = stash_int.get_reps_like(get_option_value(opts, '--project'), get_option_value(opts, '--exclude_rep_mask'))
+            logging.info(args)
         repos = __get_validated_git_repos__(set(args))
 
         # We need the repos above to be set before we read the git config.
@@ -237,8 +265,8 @@ def main():
     except (
             filtering.InvalidRegExpError, format.InvalidFormatError, optval.InvalidOptionArgument,
             getopt.error) as exception:
-        print(sys.argv[0], "\b:", exception.msg, file=sys.stderr)
-        print(_("Try `{0} --help' for more information.").format(sys.argv[0]), file=sys.stderr)
+        logging.info(sys.argv[0], "\b:", exception.msg, file=sys.stderr)
+        logging.info(_("Try `{0} --help' for more information.").format(sys.argv[0]), file=sys.stderr)
         sys.exit(2)
 
 

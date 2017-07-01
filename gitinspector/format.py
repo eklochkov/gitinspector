@@ -25,6 +25,8 @@ import textwrap
 import time
 import zipfile
 
+import logging
+
 from excelintegration import get_data_sheet
 from .localization import N_
 from . import basedir, localization, terminal, version
@@ -101,7 +103,7 @@ def output_header(repos):
         else:
             jquery_js = " src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\">"
 
-        print(html_header.format(title=_("Repository statistics for '{0}'").format(repos_string),
+        logging.info(html_header.format(title=_("Repository statistics for '{0}'").format(repos_string),
                                  jquery=jquery_js,
                                  jquery_tablesorter=tablesorter_js,
                                  jquery_flot=flot_js,
@@ -119,41 +121,41 @@ def output_header(repos):
                                  show_minor_rows=_("Show rows with minor work"),
                                  hide_minor_rows=_("Hide rows with minor work")))
     elif __selected_format__ == "json":
-        print("{\n\t\"gitinspector\": {")
-        print("\t\t\"version\": \"" + version.__version__ + "\",")
+        logging.info("{\n\t\"gitinspector\": {")
+        logging.info("\t\t\"version\": \"" + version.__version__ + "\",")
 
         if len(repos) <= 1:
-            print("\t\t\"repository\": \"" + repos_string + "\",")
+            logging.info("\t\t\"repository\": \"" + repos_string + "\",")
         else:
             repos_json = "\t\t\"repositories\": [ "
 
             for repo in repos:
                 repos_json += "\"" + repo.name + "\", "
 
-            print(repos_json[:-2] + " ],")
+            logging.info(repos_json[:-2] + " ],")
 
-        print("\t\t\"report_date\": \"" + time.strftime("%Y/%m/%d") + "\",")
+        logging.info("\t\t\"report_date\": \"" + time.strftime("%Y/%m/%d") + "\",")
 
     elif __selected_format__ == "xml":
-        print("<gitinspector>")
-        print("\t<version>" + version.__version__ + "</version>")
+        logging.info("<gitinspector>")
+        logging.info("\t<version>" + version.__version__ + "</version>")
 
         if len(repos) <= 1:
-            print("\t<repository>" + repos_string + "</repository>")
+            logging.info("\t<repository>" + repos_string + "</repository>")
         else:
-            print("\t<repositories>")
+            logging.info("\t<repositories>")
 
             for repo in repos:
-                print("\t\t<repository>" + repo.name + "</repository>")
+                logging.info("\t\t<repository>" + repo.name + "</repository>")
 
-            print("\t</repositories>")
+            logging.info("\t</repositories>")
 
-        print("\t<report-date>" + time.strftime("%Y/%m/%d") + "</report-date>")
+        logging.info("\t<report-date>" + time.strftime("%Y/%m/%d") + "</report-date>")
     elif __selected_format__ == "excel":
         get_data_sheet().write(0, 0, (INFO_ONE_REPOSITORY if len(repos) <= 1 else INFO_MANY_REPOSITORIES).format(
             repos_string, localization.get_date()))
     else:
-        print(textwrap.fill(_(INFO_ONE_REPOSITORY if len(repos) <= 1 else INFO_MANY_REPOSITORIES).format(
+        logging.info(textwrap.fill(_(INFO_ONE_REPOSITORY if len(repos) <= 1 else INFO_MANY_REPOSITORIES).format(
             repos_string, localization.get_date()), width=terminal.get_size()[0]))
 
 
@@ -161,8 +163,8 @@ def output_footer():
     if __selected_format__ == "html" or __selected_format__ == "htmlembedded":
         base = basedir.get_basedir()
         html_footer = __output_html_template__(base + "/html/html.footer")
-        print(html_footer)
+        logging.info(html_footer)
     elif __selected_format__ == "json":
-        print("\n\t}\n}")
+        logging.info("\n\t}\n}")
     elif __selected_format__ == "xml":
-        print("</gitinspector>")
+        logging.info("</gitinspector>")
