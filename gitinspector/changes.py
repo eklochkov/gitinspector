@@ -166,6 +166,7 @@ class Changes(object):
     authors_by_email = {}
     emails_by_author = {}
     authors_code_type = {}
+    teams_sum = {}
 
     def __init__(self, repo, hard, print_commits):
         self.commits = []
@@ -307,5 +308,6 @@ class Changes(object):
                 Changes.put_commit_to_db(dao_commit_diff, i)
             self.authors = dao_commit_diff.get_sum()
             self.authors_code_type = dao_commit_diff.get_code_type_data()
+            self.teams_sum = dao_commit_diff.get_sum_by_team()
             dao_commit_diff.close()
-        return self.authors, self.authors_code_type
+        return self.authors, self.authors_code_type, self.teams_sum

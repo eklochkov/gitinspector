@@ -38,6 +38,7 @@ import xlsxwriter
 __excel_book__ = None
 __code_type_data_sheet__ = None
 __data_sheet__ = None
+__teams_data_sheet__ = None
 
 
 def get_excel_book():
@@ -82,6 +83,13 @@ def add_chart(sheet, series):
 
     # Insert the chart into the worksheet (with an offset).
     sheet.insert_chart('D2', chart1, {'x_offset': 25, 'y_offset': 10})
+
+def get_teams_data_sheet():
+    global __teams_data_sheet__
+    if __teams_data_sheet__ == None:
+        __teams_data_sheet__ = get_excel_book().add_worksheet("Teams by code")
+    return __teams_data_sheet__
+
 
 
 class Serie(object):

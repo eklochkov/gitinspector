@@ -10,3 +10,4 @@ dist
 *.log
 gitinspector/__pycache__/
 gitinspector/output/__pycache__/
+/Viborka_sotrudnikov.xlsx

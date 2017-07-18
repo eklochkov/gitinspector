@@ -122,3 +122,26 @@ class SqliteDaoCommitDiff(DaoCommitDiff):
                                 (1, item.email.lower(), item.name, item.position, item.adm_team, item.role, item.capacity, item.company,
                                  item.team, item.work_centre,))
         self.connection.commit()
+
+    def get_sum_by_team(self):  # must return array of array with sum modifies as column by team
+        rows = [];
+        for row in self.cursor.execute('''SELECT ifnull(o.team,ifnull(o.name,ifnull(d.email, d.author_name))) name, d.code_type, 
+                                       SUM(d.insertions) insertions, SUM(d.deletions) deletions, 
+                                       count(c.email), substr(d.date_diff,1,7) month
+                                  FROM changes d
+                                  LEFT JOIN commits c
+                                  ON c.email = d.email AND d.date_diff= c.date_commit
+                                  LEFT JOIN org_members o
+                                  ON o.email = d.email 
+                                GROUP BY ifnull(o.team,ifnull(o.name,ifnull(d.email, d.author_name))), d.code_type, substr(d.date_diff, 1, 7)
+                                ORDER BY month, name'''):
+            logging.info(row)
+            report_row = ReportRow();
+            report_row.author_name = row[0];
+            report_row.code_type = row[1];
+            report_row.insertions = row[2];
+            report_row.deletions = row[3];
+            report_row.commits = row[4];
+            report_row.month = row[5];
+            rows.append(report_row);
+        return rows;
