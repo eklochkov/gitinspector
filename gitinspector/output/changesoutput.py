@@ -24,7 +24,8 @@ import textwrap
 
 import logging
 
-from excelintegration import get_excel_book, get_data_sheet, get_code_type_data_sheet, Serie, add_chart
+from excelintegration import get_excel_book, get_data_sheet, get_code_type_data_sheet, Serie, add_chart, \
+    get_teams_data_sheet
 from ..localization import N_
 from .. import format, gravatar, terminal
 from .outputable import Outputable
@@ -200,7 +201,7 @@ class ChangesOutput(Outputable):
             logging.info("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
 
     def output_excel(self):
-        authorinfo_list, authors_code_type_table  = self.changes.get_authorinfo_by_month_list()
+        authorinfo_list, authors_code_type_table, teams_sum  = self.changes.get_authorinfo_by_month_list()
         total_changes = 0.0
 
         for authorinfo in authorinfo_list:
@@ -238,5 +239,19 @@ class ChangesOutput(Outputable):
                 n += 1
             #add chart
             add_chart(sheet_code_type, series)
+
+        if teams_sum:
+            sheet_teams = get_teams_data_sheet()
+            headings = ['Author', 'Code type', 'Commits', 'Insertions', 'Deletions', 'Modifies', '% of changes',
+                        'Year - Month']
+            sheet_teams.write_row('A1', headings)
+            sheet_teams.set_column('A:A', 30)
+            n = 1
+            for authorinfo in teams_sum:
+                sheet_teams.write_row(n, 0, [authorinfo.author_name,authorinfo.code_type,authorinfo.commits,  authorinfo.insertions,
+                                  authorinfo.deletions, authorinfo.deletions + authorinfo.insertions,
+                                  "{0:.2f}".format(percentage), authorinfo.month]);
+                n += 1
+
         else:
             logging.info(_(NO_COMMITED_FILES_TEXT) + ".")
