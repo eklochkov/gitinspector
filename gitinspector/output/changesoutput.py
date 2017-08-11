@@ -237,8 +237,9 @@ class ChangesOutput(Outputable):
                         column_index += 1
                 sheet_code_type.write_row(n, 0, row);
                 n += 1
-            #add chart
-            add_chart(sheet_code_type, series)
+            if len(series) > 0:
+                #add chart
+                add_chart(sheet_code_type, series)
 
         if teams_sum:
             sheet_teams = get_teams_data_sheet()
