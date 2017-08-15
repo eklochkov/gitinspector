@@ -65,24 +65,25 @@ def get_code_type_data_sheet():
 
 
 def add_chart(sheet, series):
-    # Create a new chart object. In this case an embedded chart.
-    chart1 = get_excel_book().add_chart({'type': 'bar', 'subtype': 'stacked'})
-    for serie in series:
-        chart1.add_series({
-            'name': serie.name,
-            'categories': serie.categories,
-            'values': serie.values,
-        })
-        # Add a chart title and some axis labels.
-        #  chart1.set_title({'name': 'Results of sample analysis'})
-        # chart1.set_x_axis({'name': 'Test number'})
-    # chart1.set_y_axis({'name': 'Sample length (mm)'})
+    if len(series) > 0:
+        # Create a new chart object. In this case an embedded chart.
+        chart1 = get_excel_book().add_chart({'type': 'bar', 'subtype': 'stacked'})
+        for serie in series:
+            chart1.add_series({
+                'name': serie.name,
+                'categories': serie.categories,
+                'values': serie.values,
+            })
+            # Add a chart title and some axis labels.
+            #  chart1.set_title({'name': 'Results of sample analysis'})
+            # chart1.set_x_axis({'name': 'Test number'})
+        # chart1.set_y_axis({'name': 'Sample length (mm)'})
 
-    # Set an Excel chart style. Colors with white outline and shadow.
-    chart1.set_style(10)
+        # Set an Excel chart style. Colors with white outline and shadow.
+        chart1.set_style(10)
 
-    # Insert the chart into the worksheet (with an offset).
-    sheet.insert_chart('D2', chart1, {'x_offset': 25, 'y_offset': 10})
+        # Insert the chart into the worksheet (with an offset).
+        sheet.insert_chart('D2', chart1, {'x_offset': 25, 'y_offset': 10})
 
 def get_teams_data_sheet():
     global __teams_data_sheet__

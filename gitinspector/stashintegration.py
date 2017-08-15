@@ -26,6 +26,7 @@ class StashIntegration(object):
     def __init__(self,url,user_name, password):
         self.user_name = user_name
         self.url = url
+        logging.info("Connect to stash https://%s with user %s", self.url, self.user_name)
         self.stash = stashy.connect('https://'+self.url, self.user_name, password)
 
     def get_projects_like(self, substring):
@@ -35,6 +36,7 @@ class StashIntegration(object):
               logging.info("Find project="+i['key'])
 
     def get_reps_like(self, project_substring, exclude_reps_mask):
+        logging.info("Start search repositories for project " + project_substring)
         project_list = self.stash.projects.list()
         reps = []
         for project in project_list:
@@ -44,4 +46,6 @@ class StashIntegration(object):
                   if exclude_reps_mask== None or rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
                       logging.info("Find rep="+rep['name'])
                       reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
+        if len(reps) == 0:
+            logging.info("No repository find for project " + project_substring)
         return reps
