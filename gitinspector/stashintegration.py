@@ -35,7 +35,7 @@ class StashIntegration(object):
             if i['key'].find(substring) != -1:
               logging.info("Find project="+i['key'])
 
-    def get_reps_like(self, project_substring, exclude_reps_mask):
+    def get_reps_like(self, project_substring, exclude_reps_mask, repository_name):
         logging.info("Start search repositories for project " + project_substring)
         project_list = self.stash.projects.list()
         reps = []
@@ -44,8 +44,9 @@ class StashIntegration(object):
               logging.info("Search in project=" + project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
                   if exclude_reps_mask== None or rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
-                      logging.info("Find rep="+rep['name'])
-                      reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
+                      if repository_name == None or rep['name'].upper().find(repository_name.upper()) != -1:
+                        logging.info("Find rep="+rep['name'])
+                        reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
         if len(reps) == 0:
             logging.info("No repository find for project " + project_substring)
         return reps

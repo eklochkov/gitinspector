@@ -210,7 +210,7 @@ class ChangesOutput(Outputable):
 
         if authorinfo_list:
             sh = get_data_sheet()
-            headings = ['Author', 'Code type', 'Commits by files', 'Insertions', 'Deletions', 'Modifies', '% of changes', 'Year - Month']
+            headings = ['Author', 'Code type', 'Changed files', 'Insertions', 'Deletions', 'Modifies', '% of changes', 'Year - Month']
             sh.write_row('A2', headings)
             sh.set_column('A:A', 30)
             n = 1

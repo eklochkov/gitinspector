@@ -186,11 +186,11 @@ def main():
                                                                     "metrics:true", "responsibilities:true", "since=",
                                                                     "grading:true",
                                                                     "timeline:true", "until=", "version", "weeks:true",
-                                                                    "commits", "project=", "login=", "password=", "exclude_rep_mask="])
+                                                                    "commits", "project=", "repository_name=", "login=", "password=", "exclude_rep_mask="])
         if get_option_value(opts, '--project'):
             stash_int = StashIntegration("stash.billing.ru", get_option_value(opts, '--login'),
                                          get_option_value(opts, '--password'))
-            args = stash_int.get_reps_like(get_option_value(opts, '--project'), get_option_value(opts, '--exclude_rep_mask'))
+            args = stash_int.get_reps_like(get_option_value(opts, '--project'), get_option_value(opts, '--exclude_rep_mask'), get_option_value(opts, '--repository_name'))
             logging.info(args)
         repos = __get_validated_git_repos__(set(args))
 
