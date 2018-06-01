@@ -168,8 +168,10 @@ def main():
     logging.getLogger('').addHandler(console)
 
     #load structure
+    structure_name = "Viborka_sotrudnikov.xlsx"
     org = OrganizationStructure()
-    org.load_from_excel("Viborka_sotrudnikov.xlsx")
+    if os.path.isfile(structure_name):
+        org.load_from_excel(structure_name)
     dao_commit_diff = get_sqlite_dao()
     dao_commit_diff.insert_org_structure(org)
 
