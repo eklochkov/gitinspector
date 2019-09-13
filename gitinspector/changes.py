@@ -101,8 +101,14 @@ class ChangesThread(threading.Thread):
         thread.start()
 
     def run(self):
-        git_log_r = subprocess.Popen(filter(None, ["git", "log", "--reverse", "--pretty=%ct|%cd|%H|%aN|%aE",
-                                                   "--stat=100000,8192", "--no-merges", "-w", interval.get_since(),
+        # git_log_r = subprocess.Popen(filter(None, ["git", "log", "--reverse", "--pretty=%ct|%cd|%H|%aN|%aE",
+        #                                            "--stat=100000,8192", "--no-merges", "-w", interval.get_since(),
+        #                                            interval.get_until(), "--date=short"] + (
+        #                                         ["-C", "-C", "-M"] if self.hard else []) +
+        #                                     [self.first_hash + self.second_hash]), bufsize=1,
+        #                              stdout=subprocess.PIPE).stdout
+        git_log_r = subprocess.Popen(filter(None, ["git", "log", "--pretty=%ct|%cd|%H|%aN|%aE",
+                                                   "--stat=100000,8192", "--remotes", "-w", interval.get_since(),
                                                    interval.get_until(), "--date=short"] + (
                                                 ["-C", "-C", "-M"] if self.hard else []) +
                                             [self.first_hash + self.second_hash]), bufsize=1,
@@ -175,9 +181,15 @@ class Changes(object):
         # git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
         #                                     interval.get_since(), interval.get_until(), "HEAD"]), bufsize=1,
         #                                     stdout=subprocess.PIPE).stdout
-        logging.info(["git", "rev-list", "--reverse", "--no-merges",
+        # logging.info(["git", "rev-list", "--reverse", "--no-merges",
+        #               interval.get_since(), interval.get_until(), "--remotes"])
+        # git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
+        #                                                   interval.get_since(), interval.get_until(), "--remotes"]),
+        #                                     bufsize=1,
+        #                                     stdout=subprocess.PIPE).stdout
+        logging.info(["git", "rev-list",
                       interval.get_since(), interval.get_until(), "--remotes"])
-        git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list", "--reverse", "--no-merges",
+        git_log_hashes_r = subprocess.Popen(filter(None, ["git", "rev-list",
                                                           interval.get_since(), interval.get_until(), "--remotes"]),
                                             bufsize=1,
                                             stdout=subprocess.PIPE).stdout
