@@ -9,4 +9,6 @@ REM python gitinspector.py --format=excel --since=2016/09/01 ssh://git@stash.[do
 
 REM ---
 REM CHDB DEV
-REM python gitinspector.py --since=2017/01/01 https://[name]@stash.[domain]/scm/chargesdb/chargesdb_tests.git https://Alexander.Zolotarev@stash.billing.ru/scm/chargesdb/charging_data_conveyer.git https://Alexander.Zolotarev@stash.billing.ru/scm/chargesdb/customer_guardian.git https://Alexander.Zolotarev@stash.billing.ru/scm/chargesdb/customer_reporter.git https://[name]@stash.[domain]/scm/chargesdb/oapi_chargesdb_api_backend.git >> out.txt
+REM python gitinspector.py --since=2017/01/01 https://[name]@stash.[domain]/scm/chargesdb/chargesdb_tests.git https://user_name@stash.domain.com/scm/chargesdb/charging_data_conveyer.git https://user_name@stash.domain.com/scm/chargesdb/customer_guardian.git https://user_name@stash.domain.com/scm/chargesdb/customer_reporter.git https://[name]@stash.[domain]/scm/chargesdb/oapi_chargesdb_api_backend.git >> out.txt
+
+REM for PyCharm --format=excel --since=2018/05/01 --commits --project=PROJECT --repository_name=REP_NAME --login=user_name --password=xxxx
