@@ -1,0 +1,4 @@
+Examples:
+--format=excel --since=2018/01/01 --commits --project=BSSBOX --repository_name=UFM --login=yyy --password=xxxxxx
+
+--format=excel --since=2017/01/01 --commits --project=LIS --login=yyy --password=xxxxx
