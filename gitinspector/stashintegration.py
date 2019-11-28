@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with gitinspector. If not, see <http://www.gnu.org/licenses/>.
 import logging
+import re
+
 import stashy
 
 
@@ -35,16 +37,23 @@ class StashIntegration(object):
             if i['key'].find(substring) != -1:
               logging.info("Find project="+i['key'])
 
+    def match(self, name_substring, name):
+        if name_substring == None:
+            return True
+        else:
+            project_name_substring = re.compile(name_substring.upper())
+            return project_name_substring.match(name.upper())
+
     def get_reps_like(self, project_substring, exclude_reps_mask, repository_name):
         logging.info("Start search repositories for project " + project_substring)
         project_list = self.stash.projects.list()
         reps = []
         for project in project_list:
-            if project['key'].upper().find(project_substring.upper()) != -1:
+            if self.match(project_substring,project['key']):
               logging.info("Search in project=" + project['key'])
               for rep in  self.stash.projects[project['key']].repos.list():
                   if exclude_reps_mask== None or rep['name'].upper().find(exclude_reps_mask.upper()) == -1:
-                      if repository_name == None or rep['name'].upper().find(repository_name.upper()) != -1:
+                      if self.match(repository_name,rep['name']):
                         logging.info("Find rep="+rep['name'])
                         reps.append( 'https://{0}@{1}/scm/{2}/{3}.git'.format(self.user_name,self.url,project['key'],rep['name']))
         if len(reps) == 0:
